@@ -1,5 +1,5 @@
 {
-  "name": "learning-platform-v1",
+  "name": "learning-platform-v2",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "i18next": "^24.2.1",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.471.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

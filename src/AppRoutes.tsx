@@ -3,6 +3,7 @@ import Homepage from "./pages/homepage/Homepage";
 import ClassPage from "./pages/classpage/ClassPage";
 import CourseContentPage from "./pages/coursecontent/CourseContentPage"; // Import the new page
 import Layout from "./layouts/Layout";
+import Login from "./pages/auth/Login";
 
 const AppRoutes = () => {
   return (
@@ -30,6 +31,15 @@ const AppRoutes = () => {
           element={
             <Layout>
               <CourseContentPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            <Layout>
+              <Login />
             </Layout>
           }
         />

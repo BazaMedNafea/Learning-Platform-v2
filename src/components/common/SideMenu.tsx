@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useDarkMode } from "../../contexts/DarkModeContext";
-import LanguageSwitcher from "./LanguageSwitcher"; // Import the LanguageSwitcher
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useAuth } from "../../contexts/AuthContext"; // Import useAuth
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface SideMenuProps {
 const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
   const { t, i18n } = useTranslation("common");
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { isAuthenticated } = useAuth(); // Get auth state
 
   return (
     <div
@@ -111,7 +113,18 @@ const SideMenu = ({ isOpen, onClose }: SideMenuProps) => {
                 {t("about")}
               </Link>
             </li>
-            {/* Add more menu items here */}
+            {/* Add Login Button (only if not authenticated) */}
+            {!isAuthenticated && (
+              <li>
+                <Link
+                  to="/login"
+                  className="block p-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={onClose}
+                >
+                  {t("login")}
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

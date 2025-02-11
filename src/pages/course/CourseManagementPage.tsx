@@ -9,6 +9,8 @@ import {
   addTopicToCourse,
   deleteTopic,
   addContentToTopic,
+  updateTopic,
+  updateContent,
 } from "../../services/course";
 import { getCoursesByTeacherId } from "../../services/teacher";
 import { Course, Content } from "../../types/types";
@@ -98,6 +100,28 @@ const CourseManagement: React.FC = () => {
     }
   };
 
+  const handleUpdateTopic = async (topicId: string, newTitle: string) => {
+    try {
+      await updateTopic(topicId, newTitle);
+      await loadCourses();
+    } catch (error) {
+      console.error("Error updating topic:", error);
+    }
+  };
+
+  const handleUpdateContent = async (
+    contentId: string,
+    newType: string,
+    newData: string
+  ) => {
+    try {
+      await updateContent(contentId, newType, newData);
+      await loadCourses();
+    } catch (error) {
+      console.error("Error updating content:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -124,6 +148,8 @@ const CourseManagement: React.FC = () => {
             onAddTopic={handleAddTopic}
             onDeleteTopic={handleDeleteTopic}
             onAddContent={handleAddContent}
+            onUpdateTopic={handleUpdateTopic}
+            onUpdateContent={handleUpdateContent}
           />
         ))}
       </div>

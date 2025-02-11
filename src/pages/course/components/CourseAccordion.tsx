@@ -10,6 +10,12 @@ interface CourseAccordionProps {
   onAddTopic: (title: string, courseId: string) => void;
   onDeleteTopic: (topicId: string) => void;
   onAddContent: (topicId: string, content: Content) => void;
+  onUpdateTopic: (topicId: string, newTitle: string) => void;
+  onUpdateContent: (
+    contentId: string,
+    newType: string,
+    newData: string
+  ) => void;
 }
 
 export const CourseAccordion: React.FC<CourseAccordionProps> = ({
@@ -19,6 +25,8 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
   onAddTopic,
   onDeleteTopic,
   onAddContent,
+  onUpdateTopic,
+  onUpdateContent,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newTopicTitle, setNewTopicTitle] = useState("");
@@ -88,6 +96,8 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
               topic={topic}
               onDeleteTopic={onDeleteTopic}
               onAddContent={onAddContent}
+              onUpdateTopic={onUpdateTopic}
+              onUpdateContent={onUpdateContent}
             />
           ))}
         </div>

@@ -54,6 +54,14 @@ export const addTopicToCourse = async (courseId: string, title: string) => {
   return response.data;
 };
 
+// Update a topic (teacher only)
+export const updateTopic = async (topicId: string, title: string) => {
+  const response = await api.put(`/course/topic/${topicId}`, {
+    title,
+  });
+  return response.data;
+};
+
 // Add content to a topic (teacher only)
 export const addContentToTopic = async (
   topicId: string,
@@ -62,6 +70,19 @@ export const addContentToTopic = async (
 ) => {
   const response = await api.post(`/course/${topicId}/addContent`, {
     topicId,
+    type,
+    data,
+  });
+  return response.data;
+};
+
+// Update content (teacher only)
+export const updateContent = async (
+  contentId: string,
+  type: string,
+  data: string
+) => {
+  const response = await api.put(`/course/content/${contentId}`, {
     type,
     data,
   });

@@ -49,9 +49,21 @@ const CourseManagement: React.FC = () => {
 
   const handleUpdateCourse = async (formData: FormData) => {
     try {
+      console.log("Updating course with data:", formData);
       if (selectedCourse) {
         if (selectedCourse?.courseId) {
-          await updateCourse(selectedCourse.courseId, formData);
+          // Convert FormData to a plain object for logging
+          const formDataObject: { [key: string]: any } = {};
+          formData.forEach((value, key) => {
+            formDataObject[key] = value;
+          });
+          console.log("Form Data Object:", formDataObject);
+
+          const response = await updateCourse(
+            selectedCourse.courseId,
+            formData
+          );
+          console.log("Update response:", response);
         }
         await loadCourses(); // Reload courses to reflect changes
         setIsEditModalOpen(false); // Close the modal

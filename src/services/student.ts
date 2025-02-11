@@ -7,6 +7,11 @@ export const getStudents = async () => {
   return response.data;
 };
 
+export const getStudentsByParentId = async (parentId: string) => {
+  const response = await api.get(`/student/parent/${parentId}`);
+  return response.data;
+};
+
 // Get a student by ID (admin or parent of the student)
 export const getStudentById = async (studentId: string) => {
   const response = await api.get(`/student/${studentId}`);

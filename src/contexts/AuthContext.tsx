@@ -22,6 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [, setAuthToken] = useState<string | null>(null); // Store token in memory
   const initializationRef = useRef(false);
   const actualApiCallRef = useRef(false);
 
@@ -50,12 +51,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        initializationRef.current = true;
-        await updateAuthState();
-      } else {
-      }
+      // Check if the user is authenticated by calling the API
+      initializationRef.current = true;
+      await updateAuthState();
     };
 
     initializeAuth();
@@ -70,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       actualApiCallRef.current = false; // Reset on login to allow new API call
       const response = await login(data);
-      localStorage.setItem("authToken", response.token);
+      setAuthToken(response.token); // Store token in memory
       await updateAuthState();
     } catch (error) {
       console.error("Login failed in handleLogin:", error); // Add logging
@@ -83,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const handleLogout = async () => {
     try {
       await logout();
-      localStorage.removeItem("authToken");
+      setAuthToken(null); // Clear token from memory
       setUser(null);
       setIsAuthenticated(false);
       actualApiCallRef.current = false; // Reset on logout
@@ -97,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       actualApiCallRef.current = false; // Reset on refresh to allow new API call
       const token = await refreshToken();
-      localStorage.setItem("authToken", token);
+      setAuthToken(token); // Store refreshed token in memory
       await updateAuthState();
     } catch (error) {
       console.error("Token refresh failed:", error);

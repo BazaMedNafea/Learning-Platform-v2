@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Homepage from "./pages/homepage/Homepage";
 import ClassPage from "./pages/classpage/ClassPage";
-import CourseContentPage from "./pages/coursecontent/CourseContentPage"; // Import the new page
+import CourseContentPage from "./pages/course/CourseContentPage"; // Import the new page
 import Layout from "./layouts/Layout";
 import Login from "./pages/auth/Login";
 import ProfilePage from "./pages/profile/ProfilePage";
+import ManageStudentsPage from "./pages/profile/ManageStudentsPage";
+import CourseManagementPage from "./pages/course/CourseManagementPage";
 
 const AppRoutes = () => {
   return (
@@ -26,7 +28,7 @@ const AppRoutes = () => {
             </Layout>
           }
         />
-        {/* Add the new route for Course Content */}
+
         <Route
           path="/course/:courseId"
           element={
@@ -50,6 +52,24 @@ const AppRoutes = () => {
           element={
             <Layout>
               <ProfilePage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/profile/manage-students"
+          element={
+            <Layout>
+              <ManageStudentsPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/teacher/course/"
+          element={
+            <Layout>
+              <CourseManagementPage />
             </Layout>
           }
         />

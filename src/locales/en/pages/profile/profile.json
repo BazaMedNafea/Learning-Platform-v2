@@ -5,5 +5,13 @@
   "lastName": "Last Name",
   "phoneNumber": "Phone Number",
   "address": "Address",
-  "saveChanges": "Save Changes"
+  "saveChanges": "Save Changes",
+  "manageStudents": "Manage Students",
+  "level": "Level",
+  "year": "Year",
+  "stream": "Stream",
+  "addStudent": "Add Student",
+  "studentList": "Student List",
+  "edit": "Edit",
+  "delete": "Delete"
 }

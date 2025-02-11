@@ -66,3 +66,9 @@ export const deleteTeacher = async (teacherId: string) => {
   const response = await api.delete(`/teacher/${teacherId}`); // Updated to /teacher
   return response.data;
 };
+
+// Get subjects by teacher ID
+export const getTeacherSubjects = async (teacherId: string) => {
+  const response = await api.get(`/teacher/${teacherId}/subjects`);
+  return response.data;
+};

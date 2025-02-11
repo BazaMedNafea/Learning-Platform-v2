@@ -7,9 +7,10 @@ export const getUserInfo = async () => {
 };
 
 export const updateUserInfo = async (data: {
-  fullName?: string;
-  telephone?: string;
-  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  address?: string;
 }) => {
   const response = await api.put("/user/my/update", data);
   return response.data;

@@ -26,6 +26,9 @@ import arCourseContent from "./locales/ar/coursecontent.json";
 import enErrors from "./locales/en/common/errors.json"; // Add errors namespace for English
 import arErrors from "./locales/ar/commom/errors.json"; // Add errors namespace for Arabic
 
+import enProfile from "./locales/en/pages/profile/profile.json";
+import arProfile from "./locales/ar/pages/profile/profile.json";
+
 // Retrieve the language from localStorage, default to 'en' if not found
 const savedLanguage = localStorage.getItem("language") || "en";
 
@@ -42,6 +45,7 @@ i18n.use(initReactI18next).init({
       coursecontent: enCourseContent,
       errors: enErrors, // Add errors namespace for English
       login: enLogin,
+      profile: enProfile,
     },
     ar: {
       common: arCommon,
@@ -53,6 +57,7 @@ i18n.use(initReactI18next).init({
       coursecontent: arCourseContent,
       errors: arErrors, // Add errors namespace for Arabic
       login: arLogin,
+      profile: arProfile,
     },
   },
   lng: savedLanguage, // Use the saved language

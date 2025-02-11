@@ -4,6 +4,7 @@ import ClassPage from "./pages/classpage/ClassPage";
 import CourseContentPage from "./pages/coursecontent/CourseContentPage"; // Import the new page
 import Layout from "./layouts/Layout";
 import Login from "./pages/auth/Login";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,15 @@ const AppRoutes = () => {
           element={
             <Layout>
               <Login />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <ProfilePage />
             </Layout>
           }
         />

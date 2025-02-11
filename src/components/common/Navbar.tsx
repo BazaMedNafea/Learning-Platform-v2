@@ -126,7 +126,7 @@ const Navbar = () => {
                 <div
                   className={`absolute ${
                     isRTL ? "left-0" : "right-0"
-                  } mt-2 bg-white dark:bg-gray-700 rounded-lg shadow-lg`}
+                  } mt-2 w-40 bg-white dark:bg-gray-700 rounded-lg shadow-lg`}
                 >
                   <ul>
                     <li>

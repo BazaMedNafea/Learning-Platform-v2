@@ -12,6 +12,7 @@ export interface ClassDetails {
 }
 
 export interface Course {
+  topics: Topic[];
   courseId?: string;
   title: string;
   description?: string;
@@ -20,16 +21,23 @@ export interface Course {
   image?: string;
 }
 
-export interface CourseFormData {
-  courseId?: string;
-  title: string;
-  description?: string;
-  isPublic: boolean;
-  subjectId: string;
-  image?: string;
-}
-
+// types.ts
 export interface Topic {
+  topicId: string | null | undefined;
   id: string;
   title: string;
+  contents: Content[]; // Update this line
+}
+
+export interface Content {
+  contentId: string;
+  type: ContentType;
+  data: string;
+  topicId: string; // Ensure topicId is required
+}
+
+export enum ContentType {
+  TEXT = "TEXT",
+  LINK = "LINK",
+  YOUTUBE_VIDEO = "YOUTUBE_VIDEO",
 }

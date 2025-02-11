@@ -47,7 +47,10 @@ export const deleteCourse = async (courseId: string) => {
 
 // Add a topic to a course (teacher only)
 export const addTopicToCourse = async (courseId: string, title: string) => {
-  const response = await api.post(`/course/${courseId}/addTopic`, { title });
+  const response = await api.post(`/course/${courseId}/addTopic`, {
+    courseId,
+    title,
+  });
   return response.data;
 };
 
@@ -58,6 +61,7 @@ export const addContentToTopic = async (
   data: string
 ) => {
   const response = await api.post(`/course/${topicId}/addContent`, {
+    topicId,
     type,
     data,
   });
@@ -66,8 +70,13 @@ export const addContentToTopic = async (
 
 // Get content of a topic (teacher only)
 export const getTopicContent = async (topicId: string) => {
-  const response = await api.get(`/course/${topicId}/content`);
-  return response.data;
+  try {
+    const response = await api.get(`/course/${topicId}/content`);
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching topic content:", error);
+    return []; // Return an empty array if there's an error
+  }
 };
 
 // Delete content (teacher only)

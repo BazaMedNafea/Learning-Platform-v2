@@ -24,6 +24,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
 }) => {
   const { user } = useAuth(); // Get user info from AuthContext
   const [formData, setFormData] = useState<Omit<Course, "id">>({
+    topics: initialData?.topics || [],
     courseId: initialData?.courseId || "",
     title: initialData?.title || "",
     description: initialData?.description || "",
@@ -84,6 +85,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
             setSelectedYear(initialSubject.year);
             setSelectedStream(initialSubject.stream || "");
             setFormData({
+              topics: initialData.topics || [],
               courseId: initialData.courseId || "",
               title: initialData.title || "",
               description: initialData.description || "",

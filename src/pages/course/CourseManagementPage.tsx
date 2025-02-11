@@ -6,15 +6,16 @@ import { CourseForm } from "./components/CourseForm";
 import { CourseCard } from "./components/CourseCard";
 import { TopicList } from "./components/TopicList";
 import {
-  getAllCourses,
   createCourse,
   updateCourse,
   deleteCourse,
   addTopicToCourse,
   deleteTopic,
-  getTopicContent,
 } from "../../services/course";
+import { getCoursesByTeacherId } from "../../services/teacher";
+
 import { Course, Topic } from "../../types/types";
+import { useAuth } from "../../contexts/AuthContext";
 
 const CourseManagement: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -23,15 +24,18 @@ const CourseManagement: React.FC = () => {
   const [isTopicsModalOpen, setIsTopicsModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
+  const { user } = useAuth(); // Ensure you have access to the user's teacherId
 
   useEffect(() => {
     loadCourses();
-  }, []);
+  }, [user]);
 
   const loadCourses = async () => {
     try {
-      const data = await getAllCourses();
-      setCourses(data);
+      if (user?.teacherId) {
+        const data = await getCoursesByTeacherId(user.teacherId);
+        setCourses(data);
+      }
     } catch (error) {
       console.error("Error loading courses:", error);
     }
@@ -85,14 +89,19 @@ const CourseManagement: React.FC = () => {
     }
   };
 
-  const handleAddTopic = async (title: string) => {
+  const handleAddTopic = async (title: string, courseId: string) => {
     try {
-      if (selectedCourse) {
-        if (selectedCourse?.courseId) {
-          await addTopicToCourse(selectedCourse.courseId, title);
+      await addTopicToCourse(courseId, title);
+      // Reload the topics for the selected course
+      if (selectedCourse && selectedCourse.courseId === courseId) {
+        const updatedCourses = await getCoursesByTeacherId(user.teacherId);
+        const updatedCourse = updatedCourses.find(
+          (c: { courseId: string }) => c.courseId === courseId
+        );
+        if (updatedCourse) {
+          setSelectedCourse(updatedCourse);
+          setTopics(updatedCourse.topics || []);
         }
-        const updatedTopics = await getTopicContent(selectedCourse.courseId!);
-        setTopics(updatedTopics);
       }
     } catch (error) {
       console.error("Error adding topic:", error);
@@ -102,10 +111,16 @@ const CourseManagement: React.FC = () => {
   const handleDeleteTopic = async (topicId: string) => {
     try {
       await deleteTopic(topicId);
+      // Reload the topics for the selected course
       if (selectedCourse) {
-        if (selectedCourse.courseId) {
-          const updatedTopics = await getTopicContent(selectedCourse.courseId);
-          setTopics(updatedTopics);
+        const updatedCourses = await getCoursesByTeacherId(user.teacherId);
+        const updatedCourse = updatedCourses.find(
+          (c: { courseId: string | undefined }) =>
+            c.courseId === selectedCourse.courseId
+        );
+        if (updatedCourse) {
+          setSelectedCourse(updatedCourse);
+          setTopics(updatedCourse.topics || []);
         }
       }
     } catch (error) {
@@ -136,10 +151,9 @@ const CourseManagement: React.FC = () => {
               setIsEditModalOpen(true);
             }}
             onDelete={handleDeleteCourse}
-            onManageTopics={async (course) => {
+            onManageTopics={(course) => {
               setSelectedCourse(course);
-              const topicsData = await getTopicContent(course.courseId!);
-              setTopics(topicsData);
+              setTopics(course.topics || []); // Directly use the topics from the fetched course
               setIsTopicsModalOpen(true);
             }}
           />
@@ -188,7 +202,9 @@ const CourseManagement: React.FC = () => {
           courseId={selectedCourse?.courseId || ""}
           topics={topics}
           onTopicDelete={handleDeleteTopic}
-          onAddTopic={handleAddTopic}
+          onAddTopic={(title) =>
+            handleAddTopic(title, selectedCourse?.courseId!)
+          }
         />
       </Modal>
     </div>

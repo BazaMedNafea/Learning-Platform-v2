@@ -72,3 +72,9 @@ export const getTeacherSubjects = async (teacherId: string) => {
   const response = await api.get(`/teacher/${teacherId}/subjects`);
   return response.data;
 };
+
+// Get courses by logged-in teacher's ID
+export const getCoursesByTeacherId = async (teacherId: string) => {
+  const response = await api.get(`/teacher/${teacherId}/courses`);
+  return response.data;
+};

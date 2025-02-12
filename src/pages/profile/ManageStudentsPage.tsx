@@ -91,13 +91,25 @@ const ManageStudentsPage = () => {
     setError(null);
 
     try {
-      await updateStudent(editingStudent.studentId, {
+      // Get the new student data from the form
+      const newStudentData = {
         firstName: editingStudent.firstName,
         lastName: editingStudent.lastName,
         level: editingStudent.level,
         year: editingStudent.year,
         stream: editingStudent.stream,
-      });
+      };
+
+      // Check if the new level is PRIMARY or MIDDLE
+      if (
+        newStudentData.level === Level.PRIMARY ||
+        newStudentData.level === Level.MIDDLE
+      ) {
+        newStudentData.stream = undefined; // Set stream to undefined
+      }
+
+      // Update the student
+      await updateStudent(editingStudent.studentId, newStudentData);
       await fetchStudents();
       setIsEditModalOpen(false);
     } catch (err) {

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, Trash2, Edit } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, Edit, UserPlus } from "lucide-react";
 import { Course, Content } from "../../../types/types";
 import { TopicSection } from "./TopicSection";
+import EnrollmentModal from "./EnrollmentModal";
 
 interface CourseAccordionProps {
   course: Course;
@@ -17,7 +18,7 @@ interface CourseAccordionProps {
     newData: string
   ) => void;
   onDeleteContent: (contentId: string) => void;
-  isLoading: boolean; // Add isLoading prop
+  isLoading: boolean;
 }
 
 export const CourseAccordion: React.FC<CourseAccordionProps> = ({
@@ -30,10 +31,11 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
   onUpdateTopic,
   onUpdateContent,
   onDeleteContent,
-  isLoading, // Destructure isLoading
+  isLoading,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newTopicTitle, setNewTopicTitle] = useState("");
+  const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
 
   const handleAddTopic = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,14 +70,20 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
         </div>
         <div className="flex space-x-2">
           <button
+            onClick={() => setIsEnrollmentModalOpen(true)}
+            className="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 rounded"
+          >
+            <UserPlus size={18} />
+          </button>
+          <button
             onClick={onEdit}
-            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded"
+            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded"
           >
             <Edit size={18} />
           </button>
           <button
             onClick={() => course.courseId && onDelete(course.courseId)}
-            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 rounded"
+            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 rounded"
           >
             <Trash2 size={18} />
           </button>
@@ -120,6 +128,11 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
           ))}
         </div>
       )}
+      <EnrollmentModal
+        isOpen={isEnrollmentModalOpen}
+        onClose={() => setIsEnrollmentModalOpen(false)}
+        courseId={course.courseId || ""}
+      />
     </div>
   );
 };

@@ -24,7 +24,7 @@ const ClassHeader = ({ title, image, category }: ClassHeaderProps) => {
     <div className="relative h-[400px] group">
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src={image} // Use the image URL passed as a prop
+          src={image} // Directly use the image prop as the src attribute
           alt={title}
           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
         />

@@ -3,7 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Clock, User, Calendar, BookOpen, Award, Users } from "lucide-react";
 import ClassHeader from "./ClassHeader";
 import { useEffect, useState } from "react";
-import { getCourseById } from "../../services/course"; // Adjust the path as needed
+import { getCourseById } from "../../services/course";
+import EnrollStudentModal from "./components/EnrollStudentModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface CourseResponse {
   courseId: string;
@@ -36,10 +38,12 @@ const ClassPage = () => {
   const { t } = useTranslation("classpage");
   const navigate = useNavigate();
   const { classId } = useParams();
+  const { user, isAuthenticated } = useAuth();
   const [courseDetails, setCourseDetails] = useState<CourseResponse | null>(
     null
   );
   const [loading, setLoading] = useState(true);
+  const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -55,6 +59,30 @@ const ClassPage = () => {
 
     fetchCourseDetails();
   }, [classId]);
+
+  const handleEnrollClick = () => {
+    if (!isAuthenticated) {
+      // Redirect to login if user is not authenticated
+      navigate("/login", { state: { from: `/class/${classId}` } });
+      return;
+    }
+    if (!user.parentId) {
+      // Handle case where user is not a parent
+      // You might want to show an error message or redirect
+      console.error("User is not authorized to enroll students");
+      return;
+    }
+    setIsEnrollModalOpen(true);
+  };
+
+  const handleEnrollmentComplete = () => {
+    // Refresh course details to update enrollment count
+    if (classId) {
+      getCourseById(classId).then((data) => {
+        setCourseDetails(data);
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -90,7 +118,7 @@ const ClassPage = () => {
     {
       icon: <Clock className="w-5 h-5" />,
       label: t("duration"),
-      value: "TBD", // Placeholder value, adjust as needed
+      value: "TBD",
     },
     {
       icon: <User className="w-5 h-5" />,
@@ -100,12 +128,12 @@ const ClassPage = () => {
     {
       icon: <Calendar className="w-5 h-5" />,
       label: t("startDate"),
-      value: "TBD", // Placeholder value, adjust as needed
+      value: "TBD",
     },
     {
       icon: <Users className="w-5 h-5" />,
       label: t("enrolled"),
-      value: "0", // Placeholder value, adjust as needed
+      value: courseDetails.enrollments.length.toString(),
     },
     {
       icon: <Award className="w-5 h-5" />,
@@ -114,11 +142,19 @@ const ClassPage = () => {
     },
   ];
 
+  const handleCourseAction = () => {
+    if (courseDetails.isPublic) {
+      navigate(`/course/${classId}`);
+    } else {
+      handleEnrollClick();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <ClassHeader
         title={courseDetails.title}
-        image={`data:image/png;base64,${courseDetails.image}`} // Convert Base64 to image
+        image={courseDetails.image}
         category={courseDetails.subject.name}
       />
 
@@ -174,15 +210,28 @@ const ClassPage = () => {
               </div>
 
               <button
-                onClick={() => navigate(`/course/${classId}`)} // Redirect to the Course Content Page
+                onClick={handleCourseAction}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-semibold transition-colors duration-200 flex items-center justify-center gap-2"
               >
-                {t("enrollNow")}
+                {courseDetails.isPublic ? t("viewCourse") : t("enrollNow")}
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Enrollment Modal */}
+      {user?.parentId && (
+        <EnrollStudentModal
+          isOpen={isEnrollModalOpen}
+          onClose={() => setIsEnrollModalOpen(false)}
+          courseId={classId || ""}
+          parentId={user.parentId}
+          onEnrollmentComplete={handleEnrollmentComplete}
+          courseLevel={courseDetails.subject.level}
+          courseYear={courseDetails.subject.year}
+        />
+      )}
     </div>
   );
 };

@@ -69,7 +69,7 @@ export interface Student {
   lastName: string;
   level: Level;
   year: Year;
-  stream?: Stream;
+  stream?: Stream | undefined;
 }
 
 export interface StudentFormData {
@@ -77,5 +77,5 @@ export interface StudentFormData {
   lastName: string;
   level: Level | "";
   year: Year | "";
-  stream: Stream | "";
+  stream: Stream | undefined | "";
 }

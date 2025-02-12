@@ -112,3 +112,28 @@ export const deleteTopic = async (topicId: string) => {
   const response = await api.delete(`/course/topic/${topicId}`);
   return response.data;
 };
+
+export const getEnrolledStudents = async (courseId: string) => {
+  try {
+    const response = await api.get(`/course/${courseId}/enrolledStudents`);
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching enrolled students:", error);
+    return []; // Return an empty array if there's an error
+  }
+};
+
+export const approveEnrollment = async (
+  courseId: string,
+  studentId: string
+) => {
+  try {
+    const response = await api.put(
+      `/course/${courseId}/approveEnrollment/${studentId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error approving enrollment:", error);
+    throw error; // Re-throw the error to handle it in the calling component
+  }
+};

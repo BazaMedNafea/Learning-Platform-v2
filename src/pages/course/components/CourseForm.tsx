@@ -13,14 +13,16 @@ interface Subject {
 
 interface CourseFormProps {
   initialData?: Course;
-  onSubmit: (data: { [key: string]: any }) => void; // Update onSubmit to accept an object
+  onSubmit: (data: { [key: string]: any }) => void;
   onCancel: () => void;
+  isLoading: boolean; // Add isLoading prop
 }
 
 export const CourseForm: React.FC<CourseFormProps> = ({
   initialData,
   onSubmit,
   onCancel,
+  isLoading, // Destructure isLoading
 }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState<Omit<Course, "id">>({
@@ -132,6 +134,16 @@ export const CourseForm: React.FC<CourseFormProps> = ({
 
     onSubmit(formDataToSend);
   };
+
+  if (isLoading) {
+    return (
+      <div className="max-h-[80vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <p className="text-xl font-bold">Loading...</p>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="max-h-[80vh] overflow-y-auto">

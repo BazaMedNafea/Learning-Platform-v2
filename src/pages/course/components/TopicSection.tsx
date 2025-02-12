@@ -14,6 +14,8 @@ interface TopicSectionProps {
     newType: string,
     newData: string
   ) => void;
+  onDeleteContent: (contentId: string) => void;
+  isLoading: boolean; // Add isLoading prop
 }
 
 export const TopicSection: React.FC<TopicSectionProps> = ({
@@ -22,6 +24,8 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
   onAddContent,
   onUpdateTopic,
   onUpdateContent,
+  onDeleteContent,
+  isLoading, // Destructure isLoading
 }) => {
   const [isAddingContent, setIsAddingContent] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -31,6 +35,14 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
     await onUpdateTopic(topic.topicId!, newTitle);
     setIsEditingTitle(false);
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+        <p className="text-lg font-medium dark:text-white">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
@@ -90,6 +102,7 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
             }}
             onCancel={() => setIsAddingContent(false)}
             topicId={topic.topicId!}
+            isLoading={false}
           />
         </div>
       )}
@@ -100,6 +113,8 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
             key={content.contentId}
             content={content}
             onUpdateContent={onUpdateContent}
+            onDeleteContent={onDeleteContent}
+            isLoading={false}
           />
         ))}
       </div>

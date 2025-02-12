@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Homepage from "./pages/homepage/Homepage";
 import ClassPage from "./pages/classpage/ClassPage";
-import CourseContentPage from "./pages/course/CourseContentPage"; // Import the new page
+import CourseContentPage from "./pages/classpage/CourseContentPage"; // Import the new page
 import Layout from "./layouts/Layout";
 import Login from "./pages/auth/Login";
 import ProfilePage from "./pages/profile/ProfilePage";

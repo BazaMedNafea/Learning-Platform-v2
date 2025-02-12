@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { Content, ContentType } from "../../../types/types";
 
 interface ContentItemProps {
@@ -9,11 +9,15 @@ interface ContentItemProps {
     newType: string,
     newData: string
   ) => void;
+  onDeleteContent: (contentId: string) => void;
+  isLoading: boolean; // Add isLoading prop
 }
 
 export const ContentItem: React.FC<ContentItemProps> = ({
   content,
   onUpdateContent,
+  onDeleteContent,
+  isLoading, // Destructure isLoading
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newType, setNewType] = useState<ContentType>(content.type);
@@ -23,6 +27,14 @@ export const ContentItem: React.FC<ContentItemProps> = ({
     await onUpdateContent(content.contentId!, newType, newData);
     setIsEditing(false);
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
+        <p className="text-gray-700 dark:text-gray-300">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-3">
@@ -60,13 +72,24 @@ export const ContentItem: React.FC<ContentItemProps> = ({
         </div>
       ) : (
         <div className="flex justify-between items-center">
-          <p className="text-gray-700 dark:text-gray-300">{content.data}</p>
+          <div>
+            <p className="text-gray-700 dark:text-gray-300">{content.data}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {content.type}
+            </p>
+          </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setIsEditing(true)}
               className="p-1 text-blue-600 hover:bg-blue-100 rounded dark:text-blue-400 dark:hover:bg-blue-900/50"
             >
               <Edit size={16} />
+            </button>
+            <button
+              onClick={() => onDeleteContent(content.contentId!)}
+              className="p-1 text-red-600 hover:bg-red-100 rounded dark:text-red-400 dark:hover:bg-red-900/50"
+            >
+              <Trash2 size={16} />
             </button>
           </div>
         </div>

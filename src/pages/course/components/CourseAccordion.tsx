@@ -16,6 +16,8 @@ interface CourseAccordionProps {
     newType: string,
     newData: string
   ) => void;
+  onDeleteContent: (contentId: string) => void;
+  isLoading: boolean; // Add isLoading prop
 }
 
 export const CourseAccordion: React.FC<CourseAccordionProps> = ({
@@ -27,6 +29,8 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
   onAddContent,
   onUpdateTopic,
   onUpdateContent,
+  onDeleteContent,
+  isLoading, // Destructure isLoading
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [newTopicTitle, setNewTopicTitle] = useState("");
@@ -42,6 +46,14 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
       console.error(`courseId is undefined or newTopicTitle is empty`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <p className="text-xl font-bold">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -102,6 +114,8 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
               onAddContent={onAddContent}
               onUpdateTopic={onUpdateTopic}
               onUpdateContent={onUpdateContent}
+              onDeleteContent={onDeleteContent}
+              isLoading={false}
             />
           ))}
         </div>

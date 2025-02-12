@@ -1,4 +1,3 @@
-// components/ContentForm.tsx
 import React, { useState } from "react";
 import { Content, ContentType } from "../../../types/types";
 
@@ -6,26 +5,36 @@ interface ContentFormProps {
   initialContent?: Content | null;
   onSubmit: (content: Content) => void;
   onCancel: () => void;
-  topicId: string; // Add topicId as a prop
+  topicId: string;
+  isLoading: boolean; // Add isLoading prop
 }
 
 export const ContentForm: React.FC<ContentFormProps> = ({
   initialContent,
   onSubmit,
   onCancel,
-  topicId, // Receive topicId as a prop
+  topicId,
+  isLoading, // Destructure isLoading
 }) => {
   const [content, setContent] = useState<Content>({
     contentId: initialContent?.contentId || "",
     type: initialContent?.type || ContentType.TEXT,
     data: initialContent?.data || "",
-    topicId: topicId, // Set topicId from the prop
+    topicId: topicId,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(content);
   };
+
+  if (isLoading) {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <p className="text-xl font-bold">Loading...</p>
+      </form>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

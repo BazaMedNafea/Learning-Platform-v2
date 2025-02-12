@@ -2,78 +2,73 @@ import { useTranslation } from "react-i18next";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Clock, User, Calendar, BookOpen, Award, Users } from "lucide-react";
 import ClassHeader from "./ClassHeader";
-import { ClassDetails } from "../../types/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getCourseById } from "../../services/course"; // Adjust the path as needed
+
+interface CourseResponse {
+  courseId: string;
+  title: string;
+  description: string;
+  teacherId: string;
+  isPublic: boolean;
+  subjectId: string;
+  image: string;
+  topics: { topicId: string; title: string; courseId: string }[];
+  teacher: {
+    teacherId: string;
+    userId: string;
+    bio: string;
+    user: { firstName: string; lastName: string };
+  };
+  enrollments: [];
+  subject: {
+    subjectId: string;
+    name: string;
+    level: string;
+    stream: null;
+    year: string;
+  };
+  quizzes: [];
+  exams: [];
+}
 
 const ClassPage = () => {
   const { t } = useTranslation("classpage");
   const navigate = useNavigate();
   const { classId } = useParams();
+  const [courseDetails, setCourseDetails] = useState<CourseResponse | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
 
-  // Scroll to the top of the page when the component mounts
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    const fetchCourseDetails = async () => {
+      try {
+        const data = await getCourseById(classId || "");
+        setCourseDetails(data);
+      } catch (error) {
+        console.error("Error fetching course details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Mock data with real image URLs
-  const classes: ClassDetails[] = [
-    {
-      id: "1",
-      title: t("class1Title"),
-      description: t("class1Description"),
-      instructor: t("class1Instructor"),
-      duration: t("class1Duration"),
-      category: "Photography",
-      startDate: "February 15, 2024",
-      students: "124",
-      level: "Intermediate",
-      image:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80", // Photo by Chris Montgomery on Unsplash
-    },
-    {
-      id: "2",
-      title: t("class2Title"),
-      description: t("class2Description"),
-      instructor: t("class2Instructor"),
-      duration: t("class2Duration"),
-      category: "Design",
-      startDate: "March 1, 2024",
-      students: "98",
-      level: "Beginner",
-      image:
-        "https://images.pexels.com/photos/4145153/pexels-photo-4145153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // Photo by Julia M Cameron from Pexels
-    },
-    {
-      id: "3",
-      title: t("class3Title"),
-      description: t("class3Description"),
-      instructor: t("class3Instructor"),
-      duration: t("class3Duration"),
-      category: "Development",
-      startDate: "March 15, 2024",
-      students: "156",
-      level: "Advanced",
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80", // Photo by Chris Ried on Unsplash
-    },
-    {
-      id: "4",
-      title: t("class4Title"),
-      description: t("class4Description"),
-      instructor: t("class4Instructor"),
-      duration: t("class4Duration"),
-      category: "Marketing",
-      startDate: "April 1, 2024",
-      students: "112",
-      level: "Intermediate",
-      image:
-        "https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // Photo by Christina Morillo from Pexels
-    },
-  ];
+    fetchCourseDetails();
+  }, [classId]);
 
-  const classDetails = classes.find((cls) => cls.id === classId);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            {t("loadingCourse")}
+          </h2>
+        </div>
+      </div>
+    );
+  }
 
-  if (!classDetails) {
+  if (!courseDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
@@ -95,36 +90,36 @@ const ClassPage = () => {
     {
       icon: <Clock className="w-5 h-5" />,
       label: t("duration"),
-      value: classDetails.duration,
+      value: "TBD", // Placeholder value, adjust as needed
     },
     {
       icon: <User className="w-5 h-5" />,
       label: t("instructor"),
-      value: classDetails.instructor,
+      value: `${courseDetails.teacher.user.firstName} ${courseDetails.teacher.user.lastName}`,
     },
     {
       icon: <Calendar className="w-5 h-5" />,
       label: t("startDate"),
-      value: classDetails.startDate,
+      value: "TBD", // Placeholder value, adjust as needed
     },
     {
       icon: <Users className="w-5 h-5" />,
       label: t("enrolled"),
-      value: classDetails.students,
+      value: "0", // Placeholder value, adjust as needed
     },
     {
       icon: <Award className="w-5 h-5" />,
       label: t("level"),
-      value: classDetails.level,
+      value: courseDetails.subject.level,
     },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <ClassHeader
-        title={classDetails.title}
-        image={classDetails.image} // Pass the image URL to ClassHeader
-        category={classDetails.category}
+        title={courseDetails.title}
+        image={`data:image/png;base64,${courseDetails.image}`} // Convert Base64 to image
+        category={courseDetails.subject.name}
       />
 
       <div className="container mx-auto px-4 py-12">
@@ -136,7 +131,7 @@ const ClassPage = () => {
                 {t("aboutCourse")}
               </h2>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                {classDetails.description}
+                {courseDetails.description}
               </p>
             </div>
 
@@ -145,11 +140,11 @@ const ClassPage = () => {
                 {t("whatYouWillLearn")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((item) => (
-                  <div key={item} className="flex items-start gap-3">
+                {courseDetails.topics.map((topic, index) => (
+                  <div key={index} className="flex items-start gap-3">
                     <BookOpen className="w-5 h-5 text-blue-600 mt-1" />
                     <span className="text-gray-600 dark:text-gray-300">
-                      {t(`learningPoint${item}`)}
+                      {topic.title}
                     </span>
                   </div>
                 ))}

@@ -1,65 +1,71 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { getAllCourses } from "../../services/course"; // Adjust the path as needed
 
 const ClassesSection = () => {
   const { t } = useTranslation("homepage/classessection");
+  const [courses, setCourses] = useState<
+    { courseId: string; image: string; title: string; description: string }[]
+  >([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for classes with real image URLs
-  const classes = [
-    {
-      id: "1",
-      title: t("class1Title"),
-      description: t("class1Description"),
-      image:
-        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80", // Photo by Chris Montgomery on Unsplash
-    },
-    {
-      id: "2",
-      title: t("class2Title"),
-      description: t("class2Description"),
-      image:
-        "https://images.pexels.com/photos/4145153/pexels-photo-4145153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // Photo by Julia M Cameron from Pexels
-    },
-    {
-      id: "3",
-      title: t("class3Title"),
-      description: t("class3Description"),
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80", // Photo by Chris Ried on Unsplash
-    },
-    {
-      id: "4",
-      title: t("class4Title"),
-      description: t("class4Description"),
-      image:
-        "https://images.pexels.com/photos/1181677/pexels-photo-1181677.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2", // Photo by Christina Morillo from Pexels
-    },
-  ];
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await getAllCourses();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16 text-gray-900 dark:text-white">
+            {t("classesTitle")}
+          </h2>
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Loading courses...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gray-800">
+    <section className="py-24">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16 text-gray-900 dark:text-white">
           {t("classesTitle")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {classes.map((cls) => (
+          {courses.map((course) => (
             <Link
-              to={`/class/${cls.id}`}
-              key={cls.id}
+              to={`/class/${course.courseId}`}
+              key={course.courseId}
               className="bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200"
             >
               <img
-                src={cls.image}
-                alt={cls.title}
+                src={`data:image/png;base64,${course.image}`} // Convert Base64 to image
+                alt={course.title}
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">
-                  {cls.title}
+                  {course.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {cls.description}
+                  {course.description}
                 </p>
               </div>
             </Link>

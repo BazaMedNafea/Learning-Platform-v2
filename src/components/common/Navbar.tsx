@@ -139,6 +139,18 @@ const Navbar = () => {
                         {t("profile")}
                       </Link>
                     </li>
+                    {user?.role === "TEACHER" && (
+                      <li>
+                        <Link
+                          to="/teacher/course"
+                          className={`block px-3 py-1.5 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {t("myCourses")}
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <button
                         onClick={logout}

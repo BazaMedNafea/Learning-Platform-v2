@@ -41,3 +41,41 @@ export enum ContentType {
   LINK = "LINK",
   YOUTUBE_VIDEO = "YOUTUBE_VIDEO",
 }
+
+export enum Level {
+  PRIMARY = "PRIMARY",
+  MIDDLE = "MIDDLE",
+  SECONDARY = "SECONDARY",
+}
+
+export enum Stream {
+  SCIENCES = "SCIENCES",
+  MATHEMATICS = "MATHEMATICS",
+  LITERATURE = "LITERATURE",
+  TECHNICAL = "TECHNICAL",
+}
+
+export enum Year {
+  FIRST = "FIRST",
+  SECOND = "SECOND",
+  THIRD = "THIRD",
+  FOURTH = "FOURTH",
+  FIFTH = "FIFTH",
+}
+
+export interface Student {
+  studentId: string;
+  firstName: string;
+  lastName: string;
+  level: Level;
+  year: Year;
+  stream?: Stream;
+}
+
+export interface StudentFormData {
+  firstName: string;
+  lastName: string;
+  level: Level | "";
+  year: Year | "";
+  stream: Stream | "";
+}

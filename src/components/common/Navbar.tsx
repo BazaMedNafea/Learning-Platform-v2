@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SideMenu from "./SideMenu";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate(); // Use useNavigate to navigate
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -41,6 +42,11 @@ const Navbar = () => {
   }, []);
 
   const isRTL = i18n.language === "ar";
+
+  const handleLogout = () => {
+    logout(); // Perform the logout action
+    navigate("/"); // Navigate to the home page
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-blue-500 dark:bg-gray-800 p-4">
@@ -151,9 +157,21 @@ const Navbar = () => {
                         </Link>
                       </li>
                     )}
+                    {user?.role === "PARENT" && (
+                      <li>
+                        <Link
+                          to="/profile/manage-students"
+                          className={`block px-3 py-1.5 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 ${
+                            isRTL ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {t("manageStudent")}
+                        </Link>
+                      </li>
+                    )}
                     <li>
                       <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className={`w-full px-3 py-1.5 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600 ${
                           isRTL ? "text-right" : "text-left"
                         }`}

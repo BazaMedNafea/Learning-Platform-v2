@@ -56,7 +56,7 @@ const ClassesSection = () => {
               className="bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200"
             >
               <img
-                src={`data:image/png;base64,${course.image}`} // Convert Base64 to image
+                src={course.image} // Directly use the Base64 image string
                 alt={course.title}
                 className="w-full h-48 object-cover"
               />

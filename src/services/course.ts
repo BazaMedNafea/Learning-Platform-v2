@@ -20,20 +20,23 @@ export const getCourseById = async (courseId: string) => {
 };
 
 // Create a new course (teacher only)
-export const createCourse = async (data: FormData) => {
+export const createCourse = async (data: { [key: string]: any }) => {
   const response = await api.post("/course/create", data, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
   });
   return response.data;
 };
 
 // Update a course (teacher only)
-export const updateCourse = async (courseId: string, data: FormData) => {
+export const updateCourse = async (
+  courseId: string,
+  data: { [key: string]: any }
+) => {
   const response = await api.put(`/course/${courseId}`, data, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
   });
   return response.data;
@@ -48,7 +51,6 @@ export const deleteCourse = async (courseId: string) => {
 // Add a topic to a course (teacher only)
 export const addTopicToCourse = async (courseId: string, title: string) => {
   const response = await api.post(`/course/${courseId}/addTopic`, {
-    courseId,
     title,
   });
   return response.data;
@@ -69,7 +71,6 @@ export const addContentToTopic = async (
   data: string
 ) => {
   const response = await api.post(`/course/${topicId}/addContent`, {
-    topicId,
     type,
     data,
   });

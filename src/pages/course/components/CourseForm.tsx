@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Course } from "../../../types/types";
 import { getTeacherSubjects } from "../../../services/teacher";
-import { useAuth } from "../../../contexts/AuthContext"; // Add this import
+import { useAuth } from "../../../contexts/AuthContext";
 
 interface Subject {
   subjectId: string;
@@ -13,7 +13,7 @@ interface Subject {
 
 interface CourseFormProps {
   initialData?: Course;
-  onSubmit: (data: FormData) => void; // Update onSubmit to accept FormData
+  onSubmit: (data: { [key: string]: any }) => void; // Update onSubmit to accept an object
   onCancel: () => void;
 }
 
@@ -22,7 +22,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const { user } = useAuth(); // Get user info from AuthContext
+  const { user } = useAuth();
   const [formData, setFormData] = useState<Omit<Course, "id">>({
     topics: initialData?.topics || [],
     courseId: initialData?.courseId || "",
@@ -37,9 +37,9 @@ export const CourseForm: React.FC<CourseFormProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectedStream, setSelectedStream] = useState<string>("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [, setImageFile] = useState<File | null>(null);
+  const [imageBase64, setImageBase64] = useState<string>("");
 
-  // Get unique values for each filter
   const levels = Array.from(new Set(subjects.map((s) => s.level)));
   const years = Array.from(
     new Set(
@@ -61,7 +61,6 @@ export const CourseForm: React.FC<CourseFormProps> = ({
     )
   );
 
-  // Filter subjects based on selections
   const filteredSubjects = subjects.filter(
     (subject) =>
       (!selectedLevel || subject.level === selectedLevel) &&
@@ -101,24 +100,35 @@ export const CourseForm: React.FC<CourseFormProps> = ({
   }, [user?.teacherId, initialData]);
 
   useEffect(() => {
-    // Reset subjectId when filters change
     setFormData((prev) => ({ ...prev, subjectId: "" }));
   }, [selectedLevel, selectedYear, selectedStream]);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target) {
+          setImageBase64(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+      setImageFile(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("description", formData.description || "");
-    formDataToSend.append("isPublic", formData.isPublic ? "true" : "false");
-    formDataToSend.append("subjectId", formData.subjectId);
+    const formDataToSend = {
+      title: formData.title,
+      description: formData.description,
+      isPublic: formData.isPublic,
+      subjectId: formData.subjectId,
+      image: imageBase64 || formData.image,
+    };
 
-    if (imageFile) {
-      formDataToSend.append("image", imageFile);
-    } else if (formData.image) {
-      formDataToSend.append("image", formData.image);
-    }
+    console.log("Form data to send:", formDataToSend); // Debugging log
 
     onSubmit(formDataToSend);
   };
@@ -248,11 +258,7 @@ export const CourseForm: React.FC<CourseFormProps> = ({
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => {
-              if (e.target.files) {
-                setImageFile(e.target.files[0]);
-              }
-            }}
+            onChange={handleImageChange}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                        dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           />

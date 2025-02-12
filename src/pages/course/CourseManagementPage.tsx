@@ -39,9 +39,13 @@ const CourseManagement: React.FC = () => {
     }
   };
 
-  const handleCreateCourse = async (formData: FormData) => {
+  const handleCreateCourse = async (formData: { [key: string]: any }) => {
     try {
-      await createCourse(formData);
+      const formDataObj = new FormData();
+      Object.keys(formData).forEach((key) =>
+        formDataObj.append(key, formData[key])
+      );
+      await createCourse(formDataObj);
       await loadCourses();
       setIsCreateModalOpen(false);
     } catch (error) {
@@ -49,10 +53,14 @@ const CourseManagement: React.FC = () => {
     }
   };
 
-  const handleUpdateCourse = async (formData: FormData) => {
+  const handleUpdateCourse = async (formData: { [key: string]: any }) => {
     try {
       if (selectedCourse?.courseId) {
-        await updateCourse(selectedCourse.courseId, formData);
+        const formDataObj = new FormData();
+        Object.keys(formData).forEach((key) =>
+          formDataObj.append(key, formData[key])
+        );
+        await updateCourse(selectedCourse.courseId, formDataObj);
         await loadCourses();
         setIsEditModalOpen(false);
         setSelectedCourse(null);

@@ -82,6 +82,8 @@ const CourseManagement: React.FC = () => {
   };
 
   const handleAddTopic = async (title: string, courseId: string) => {
+    console.log(`Adding topic to course with courseId: ${courseId}`);
+    console.log(`Topic title: ${title}`);
     try {
       await addTopicToCourse(courseId, title);
       await loadCourses();

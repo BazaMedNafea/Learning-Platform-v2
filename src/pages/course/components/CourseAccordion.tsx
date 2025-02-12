@@ -34,8 +34,12 @@ export const CourseAccordion: React.FC<CourseAccordionProps> = ({
   const handleAddTopic = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newTopicTitle.trim() && course.courseId) {
+      console.log(`Adding topic with courseId: ${course.courseId}`);
+      console.log(`Topic title: ${newTopicTitle}`);
       await onAddTopic(newTopicTitle, course.courseId);
       setNewTopicTitle("");
+    } else {
+      console.error(`courseId is undefined or newTopicTitle is empty`);
     }
   };
 
